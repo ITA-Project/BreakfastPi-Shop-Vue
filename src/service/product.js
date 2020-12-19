@@ -3,7 +3,7 @@ import {
 } from '@/common/util/http.util'
 
 const getAll = async () => {
-  const getAllUrl = '/product'
+  const getAllUrl = '/ProductManagement'
   const result = await get(getAllUrl)
   return result.data
 }
