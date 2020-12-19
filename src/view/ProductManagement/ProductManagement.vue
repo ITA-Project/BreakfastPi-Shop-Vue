@@ -2,8 +2,9 @@
   <div>
     <a-table
       :columns="columns"
-      :data-source="data"
+      :data-source="categories"
       :row-key="record => record.id"
+      :pagination="false"
       class="components-table-demo-nested">
 
       <template slot="status" slot-scope="text">
@@ -51,12 +52,28 @@
 <script>
 
 import columnsConfig from './columns.config'
+import shopService from '../../service/shop'
 
 export default {
   name: 'ProductManagement',
   mixins: [columnsConfig],
   data () {
     return {
+      categories: []
+    }
+  },
+  mounted () {
+    const shopId = 1
+    this.loadCategoriesAndProducts(shopId)
+  },
+  methods: {
+    loadCategoriesAndProducts (shopId) {
+      const self = this
+      shopService.getShopDetailsByShopId(shopId).then(resp => {
+        self.categories = resp.categories
+      }).catch(err => {
+        console.log(err)
+      })
     }
   }
 }
