@@ -1,8 +1,9 @@
-const columnSlots = ['sequence', 'name', 'status', 'createTime', 'updateTime', 'action']
-const innerColumnSlots = ['inner-name', 'inner-description', 'inner-image', 'inner-price', 'inner-stock',
+const columnSlots = ['id', 'sequence', 'name', 'status', 'createTime', 'updateTime', 'action']
+const innerColumnSlots = ['inner-id', 'inner-name', 'inner-description', 'inner-image', 'inner-price', 'inner-stock',
   'inner-sales', 'inner-status', 'inner-createTime', 'inner-updateTime', 'inner-action']
 
 const columns = [
+  {title: 'Id', dataIndex: 'id', key: 'id', scopedSlots: {customRender: 'id'}},
   {title: 'Sequence', dataIndex: 'sequence', key: 'sequence', scopedSlots: {customRender: 'sequence'}},
   {title: 'Name', dataIndex: 'name', key: 'name', scopedSlots: {customRender: 'name'}},
   {title: 'Status', dataIndex: 'status', key: 'status', scopedSlots: {customRender: 'status'}},
@@ -12,6 +13,7 @@ const columns = [
 ]
 
 const innerColumns = [
+  {title: 'Id', dataIndex: 'id', key: 'id', scopedSlots: {customRender: 'inner-id'}},
   {title: 'Name', dataIndex: 'name', key: 'name', scopedSlots: {customRender: 'inner-name'}},
   {title: 'Description', dataIndex: 'description', key: 'description', scopedSlots: {customRender: 'inner-descirption'}},
   {title: 'Image', dataIndex: 'image', key: 'image', scopedSlots: {customRender: 'inner-image'}},
