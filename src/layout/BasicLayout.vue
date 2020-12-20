@@ -15,15 +15,16 @@
           <span>Order Information</span>
         </a-menu-item>
         <a-menu-item key="2">
-          <a-icon type="user" />
-          <span>My Information</span>
+          <router-link :to="{name: 'my-info'}">
+            <a-icon type="user" />
+            <span>My Information</span>
+          </router-link>
         </a-menu-item>
         <a-menu-item key="3">
-          <a-icon type="gift" />
-          <span>Product Information
          <router-link :to="{name: 'product-management'}">
-          </router-link>
-          </span>
+           <a-icon type="gift" />
+           <span>Product Information </span>
+         </router-link>
         </a-menu-item>
       </a-menu>
     </a-layout-sider>
