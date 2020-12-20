@@ -119,7 +119,7 @@ export default {
     initShopInfo () {
       shopService.getShopById(this.shopId).then((response) => {
         const data = lodash.cloneDeep(response)
-        if (response.address.indexOf('珠海市') < 0) {
+        if (lodash.isEmpty(response.address) || response.address.indexOf('珠海市') < 0) {
           data.region = ['珠海市', '其他区']
           data.detailAddress = response.address
         } else {

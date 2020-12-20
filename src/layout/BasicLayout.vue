@@ -11,8 +11,10 @@
       </div>
       <a-menu theme="dark" mode="inline" :default-selected-keys="['1']">
         <a-menu-item key="1">
-          <a-icon type="form" />
-          <span>Order Information</span>
+          <router-link :to="{name: 'order-info'}">
+            <a-icon type="form" />
+            <span>Order Information</span>
+          </router-link>
         </a-menu-item>
         <a-menu-item key="2">
           <router-link :to="{name: 'my-info'}">
