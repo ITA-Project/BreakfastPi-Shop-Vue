@@ -6,9 +6,15 @@ import router from './router'
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
 import store from './store'
+import timeFilter from './common/filter/time.filter'
+import moment from 'moment'
 
 Vue.use(Antd)
 Vue.config.productionTip = false
+Vue.prototype.$moment = moment
+
+Vue.filter('dateTime', timeFilter.dateTime)
+Vue.filter('date', timeFilter.date)
 
 /* eslint-disable no-new */
 new Vue({
