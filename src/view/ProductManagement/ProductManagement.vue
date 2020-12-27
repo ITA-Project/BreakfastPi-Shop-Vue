@@ -41,9 +41,9 @@
           </span>
         </template>
 
-        <template slot="inner-action" slot-scope="text" class="table-operation">
-          <a>Edit</a>
-          <a>Delete</a>
+        <template slot="inner-action" slot-scope="text, record, index" class="table-operation">
+          <a @click="onProductEdit(record)">Edit</a>
+          <a @click="onProductDelete(record.id)">Delete</a>
         </template>
 
       </a-table>
@@ -140,19 +140,20 @@
         <a-form :form="productForm" layout="horizontal">
           <a-row>
             <a-col>
-              <a-form-item label="Category Id" has-feedback>
+              <a-form-item label="Category" has-feedback>
                 <a-select
                   v-decorator="[
                     'categoryId',
-                    { rules: [{ required: true, message: 'Please select category id!' }] },
+                    { rules: [{ required: true, message: 'Please select category!' }] },
                   ]"
-                  placeholder="Please select a category id"
+                  placeholder="Please select a category"
                 >
-                  <a-select-option value=1>
-                    1
-                  </a-select-option>
-                  <a-select-option value=2>
-                    2
+                  <a-select-option
+                    v-for="category in categories"
+                    :key="category.id"
+                    :value="category.id"
+                  >
+                    {{category.name}}
                   </a-select-option>
                 </a-select>
               </a-form-item>
@@ -205,7 +206,7 @@
                   v-decorator="[
                   'image',
                   {
-                    rules: [{ required: true, message: 'Please enter product image' }],
+                    rules: [{ message: 'Please enter product image' }],
                   },
                 ]"
                   placeholder="Please enter product image"
@@ -216,14 +217,30 @@
           <a-row>
             <a-col>
               <a-form-item label="Price">
-                <a-input-number v-decorator="['price', { initialValue: 5 }]" :min="0" :max="999" />
+                <a-input-number
+                  v-decorator="[
+                    'price',
+                    {
+                      rules: [{required: true}],
+                      initialValue: 5
+                    }
+                  ]"
+                  :min="0" :max="999" />
               </a-form-item>
             </a-col>
           </a-row>
           <a-row>
             <a-col>
               <a-form-item label="Stock">
-                <a-input-number v-decorator="['stock', { initialValue: 100 }]" :min="0" :max="999999" />
+                <a-input-number
+                  v-decorator="[
+                    'stock',
+                    {
+                      rules: [{required: true}],
+                      initialValue: 100
+                    }
+                  ]"
+                  :min="0" :max="999999" />
               </a-form-item>
             </a-col>
           </a-row>
@@ -266,6 +283,7 @@
 import columnsConfig from './columns.config'
 import shopService from '../../service/shop'
 import categoryService from '../../service/category'
+import productService from '../../service/product'
 
 export default {
   name: 'ProductManagement',
@@ -316,7 +334,6 @@ export default {
       } else if (this.isEditCategory) {
         this.updateCategory()
       }
-      this.categoryForm.resetFields()
     },
     createCategory: function () {
       this.categoryForm.validateFields((err, values) => {
@@ -375,65 +392,68 @@ export default {
     },
     onProductDrawerClose () {
       this.productDrawerVisible = false
+      this.productForm.resetFields()
       this.isCreateProduct = false
       this.isEditProduct = false
     },
     onProductFormSubmit () {
-      const self = this
       if (this.isCreateProduct) {
         this.createProduct()
       } else if (this.isEditProduct) {
         this.updateProduct()
       }
-      self.form.resetFields()
     },
     createProduct: function () {
-      // this.productForm.validateFields((err, values) => {
-      //   if (err) {
-      //     console.log(err)
-      //     return
-      //   }
-      //   productService.createByShopId(this.shopId, values).then(resp => {
-      //     this.loadCategoriesAndProducts(this.shopId)
-      //   }).catch(err => {
-      //     console.log(err)
-      //   })
-      //   this.onProductDrawerClose()
-      // })
+      this.productForm.validateFields((err, values) => {
+        if (err) {
+          console.log(err)
+          return
+        }
+        productService.create(values).then(resp => {
+          this.loadCategoriesAndProducts(this.shopId)
+        }).catch(err => {
+          console.log(err)
+        })
+        this.onProductDrawerClose()
+      })
     },
     updateProduct: function () {
-      // this.productForm.validateFields((err, values) => {
-      //   if (err) {
-      //     console.log(err)
-      //     return
-      //   }
-      //   productService.update({...values, shopId: this.shopId}).then(resp => {
-      //     this.loadCategoriesAndProducts(this.shopId)
-      //   }).catch(err => {
-      //     console.log(err)
-      //   })
-      //   this.onProductDrawerClose()
-      // })
+      this.productForm.validateFields((err, values) => {
+        if (err) {
+          console.log(err)
+          return
+        }
+        productService.update(values).then(resp => {
+          this.loadCategoriesAndProducts(this.shopId)
+        }).catch(err => {
+          console.log(err)
+        })
+        this.onProductDrawerClose()
+      })
     },
     onProductDelete (productId) {
-      // const self = this
-      // productService.deleteById(productId).then(resp => {
-      //   self.loadCategoriesAndProducts(self.shopId)
-      // }).catch(err => {
-      //   console.log(err)
-      // })
+      const self = this
+      productService.deleteById(productId).then(resp => {
+        self.loadCategoriesAndProducts(self.shopId)
+      }).catch(err => {
+        console.log(err)
+      })
     },
     onProductEdit (record) {
-      // this.isEditProduct = true
-      // this.showProductDrawer()
-      // this.$nextTick(() => {
-      //   this.productForm.setFieldsValue({
-      //     id: record.id,
-      //     sequence: record.sequence,
-      //     name: record.name,
-      //     status: record.status
-      //   })
-      // })
+      this.isEditProduct = true
+      this.showProductDrawer()
+      this.$nextTick(() => {
+        this.productForm.setFieldsValue({
+          categoryId: record.categoryId,
+          id: record.id,
+          name: record.name,
+          description: record.description,
+          image: record.image,
+          price: record.price,
+          stock: record.stock,
+          status: record.status
+        })
+      })
     }
   }
 }
