@@ -7,6 +7,7 @@
       :data-source="categories"
       :row-key="record => record.id"
       :pagination="false"
+      :expandRowByClick="true"
       class="components-table-demo-nested">
 
       <template slot="status" slot-scope="text">
