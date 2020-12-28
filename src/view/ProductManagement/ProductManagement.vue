@@ -133,7 +133,7 @@
     <div>
       <a-drawer
         title="Product form"
-        :width="360"
+        :width="450"
         :visible="productDrawerVisible"
         :body-style="{ paddingBottom: '80px' }"
         @close="onProductDrawerClose"
@@ -202,21 +202,6 @@
           </a-row>
           <a-row>
             <a-col>
-              <a-form-item label="Image">
-                <a-input
-                  v-decorator="[
-                  'image',
-                  {
-                    rules: [{ message: 'Please enter product image' }],
-                  },
-                ]"
-                  placeholder="Please enter product image"
-                />
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row>
-            <a-col>
               <a-form-item label="Price">
                 <a-input-number
                   v-decorator="[
@@ -248,8 +233,35 @@
           <a-row>
             <a-col>
               <a-form-item label="Status">
-                <a-switch v-decorator="['status', { initialValue: true, valuePropName: 'checked' }]" />
+                <a-select v-decorator="['status', { initialValue: 0}]" :options="statusList"/>
               </a-form-item>
+            </a-col>
+          </a-row>
+          <a-row>
+            <a-col>
+              <a-form-item label="Image">
+                <a-input
+                  v-decorator="[
+                  'image',
+                  {
+                    rules: [{ message: 'Please enter product image' }],
+                  },
+                ]"
+                  placeholder="Please enter product image"
+                />
+              </a-form-item>
+            </a-col>
+          </a-row>
+          <a-row>
+            <a-col>
+              <a-upload
+                :before-upload="beforeUpload"
+                list-type="picture"
+                :default-file-list="fileList"
+                @change="handleAttachmentChange"
+              >
+                <a-button> <a-icon type="upload" /> upload </a-button>
+              </a-upload>
             </a-col>
           </a-row>
         </a-form>
@@ -300,7 +312,21 @@ export default {
       productForm: this.$form.createForm(this),
       productDrawerVisible: false,
       isCreateProduct: false,
-      isEditProduct: false
+      isEditProduct: false,
+      statusList: [
+        {
+          value: 0,
+          label: '待审核'
+        },
+        {
+          value: 1,
+          label: '审核通过'
+        },
+        {
+          value: -1,
+          label: '下架'
+        }],
+      fileList: []
     }
   },
   mounted () {
@@ -410,8 +436,16 @@ export default {
           console.log(err)
           return
         }
-        productService.create(values).then(resp => {
-          this.loadCategoriesAndProducts(this.shopId)
+        this.uploadFile().then(response => {
+          const newFile = this.newFile()
+          if (response && newFile.length > 0) {
+            values.imageUrl = newFile[0].name
+          }
+          productService.create(values).then(resp => {
+            this.loadCategoriesAndProducts(this.shopId)
+          }).catch(err => {
+            console.log(err)
+          })
         }).catch(err => {
           console.log(err)
         })
@@ -424,8 +458,16 @@ export default {
           console.log(err)
           return
         }
-        productService.update(values).then(resp => {
-          this.loadCategoriesAndProducts(this.shopId)
+        this.uploadFile().then(response => {
+          const newFile = this.newFile()
+          if (response && newFile.length > 0) {
+            values.imageUrl = newFile[0].name
+          }
+          productService.update(values).then(resp => {
+            this.loadCategoriesAndProducts(this.shopId)
+          }).catch(err => {
+            console.log(err)
+          })
         }).catch(err => {
           console.log(err)
         })
@@ -455,6 +497,55 @@ export default {
           status: record.status
         })
       })
+      this.fileList = [{
+        uid: '-1',
+        id: record.imageUrl + Math.random() * 10,
+        name: record.imageUrl,
+        status: 'done',
+        url: 'https://xiekunlong.cn/resources/' + record.imageUrl,
+        thumbUrl: 'https://xiekunlong.cn/resources/' + record.imageUrl
+      }]
+    },
+    beforeUpload (file) {
+      const allowType = 'gif;jpg;jpeg;png'
+      const isAllowType = allowType.includes(file.name.substr(file.name.lastIndexOf('.') + 1, file.name.length))
+      if (!isAllowType) {
+        this.$message.error('文件格式有问题！')
+      }
+      const isLt5M = file.size / 1024 / 1024 < 5
+      if (!isLt5M) {
+        this.$message.error('文件大小超过5M')
+      }
+      if (!isAllowType || !isLt5M) {
+        // eslint-disable-next-line no-param-reassign
+        file.status = 'error'
+      }
+      return false
+    },
+    handleAttachmentChange (info) {
+      this.fileList = [...info.fileList].map((file) => {
+        const tmpFile = file
+        if (tmpFile.response) {
+          tmpFile.url = 'about:blank'
+        }
+        return tmpFile
+      })
+    },
+    uploadFile () {
+      const files = this.newFile()
+      const isExistFile = this.fileList.filter(o => o.id !== undefined).length > 0
+      const formData = new FormData()
+      if (isExistFile || files.length > 1) {
+        this.$message.error('只能上传一张图片！')
+      } else {
+        formData.append('file', files[0])
+        return productService.uploadAttachment(formData)
+      }
+    },
+    newFile () {
+      return this.fileList
+        .filter(o => o.status !== 'error' && o.id === undefined)
+        .map(n => n.originFileObj)
     }
   }
 }

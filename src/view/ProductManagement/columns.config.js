@@ -16,7 +16,7 @@ const innerColumns = [
   {title: 'Id', dataIndex: 'id', key: 'id', scopedSlots: {customRender: 'inner-id'}},
   {title: 'Name', dataIndex: 'name', key: 'name', scopedSlots: {customRender: 'inner-name'}},
   {title: 'Description', dataIndex: 'description', key: 'description', scopedSlots: {customRender: 'inner-descirption'}},
-  {title: 'Image', dataIndex: 'image', key: 'image', scopedSlots: {customRender: 'inner-image'}},
+  {title: 'Image', dataIndex: 'imageUrl', key: 'image', scopedSlots: {customRender: 'inner-image'}},
   {title: 'Price', dataIndex: 'price', key: 'price', scopedSlots: {customRender: 'inner-price'}},
   {title: 'Stock', dataIndex: 'stock', key: 'stock', scopedSlots: {customRender: 'inner-stock'}},
   {title: 'Sales', dataIndex: 'sales', key: 'sales', scopedSlots: {customRender: 'inner-sales'}},

@@ -26,9 +26,15 @@ const deleteById = async (productId) => {
   return result
 }
 
+const uploadAttachment = async (params) => {
+  const result = await post('/ftp', params)
+  return result.data
+}
+
 export default {
   getAll,
   create,
   update,
-  deleteById
+  deleteById,
+  uploadAttachment
 }
