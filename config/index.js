@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': { // 请求接口中配置到/api的接口，都统一走这个代理
-        target: 'http://localhost:9000',
+        target: 'http://106.53.102.70:9000',
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''
