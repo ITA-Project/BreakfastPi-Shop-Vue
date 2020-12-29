@@ -14,6 +14,11 @@ export default new Router({
     component: BasicLayout,
     children: [
       {
+        path: 'order-info',
+        name: 'order-info',
+        component: OrderInfo
+      },
+      {
         path: 'product-management',
         name: 'product-management',
         component: ProductManagement
@@ -22,11 +27,6 @@ export default new Router({
         path: 'my-info',
         name: 'my-info',
         component: ShopInfo
-      },
-      {
-        path: 'order-info',
-        name: 'order-info',
-        component: OrderInfo
       }
     ]
   }]

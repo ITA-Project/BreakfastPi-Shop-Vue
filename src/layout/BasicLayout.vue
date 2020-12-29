@@ -9,7 +9,11 @@
         @click="() => (collapsed = !collapsed)"
       />
       </div>
-      <a-menu theme="dark" mode="inline" :default-selected-keys="['1']">
+      <a-menu theme="dark"
+              mode="inline"
+              :default-selected-keys="['1']"
+              :multiple="false"
+      >
         <a-menu-item key="1">
           <router-link :to="{name: 'order-info'}">
             <a-icon type="form" />
@@ -17,16 +21,16 @@
           </router-link>
         </a-menu-item>
         <a-menu-item key="2">
+          <router-link :to="{name: 'product-management'}">
+            <a-icon type="gift" />
+            <span>Product Information </span>
+          </router-link>
+        </a-menu-item>
+        <a-menu-item key="3">
           <router-link :to="{name: 'my-info'}">
             <a-icon type="user" />
             <span>My Information</span>
           </router-link>
-        </a-menu-item>
-        <a-menu-item key="3">
-         <router-link :to="{name: 'product-management'}">
-           <a-icon type="gift" />
-           <span>Product Information </span>
-         </router-link>
         </a-menu-item>
       </a-menu>
     </a-layout-sider>
@@ -59,6 +63,9 @@ export default {
       collapsed: false,
       screenHeight: document.body.clientHeight
     }
+  },
+  mounted () {
+    this.$router.push({name: 'order-info'})
   }
 }
 </script>
