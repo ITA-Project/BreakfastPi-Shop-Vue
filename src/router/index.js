@@ -4,11 +4,16 @@ import ProductManagement from '../view/ProductManagement/ProductManagement'
 import BasicLayout from '../layout/BasicLayout'
 import ShopInfo from '../view/ShopInfo/ShopInfo'
 import OrderInfo from '../view/OrderInfo/OrderInfo'
+import Login from '../view/Auth/Login'
 
 Vue.use(Router)
 
 export default new Router({
   routes: [{
+    path: '/login',
+    name: 'login',
+    component: Login
+  }, {
     path: '/',
     name: 'home',
     component: BasicLayout,
