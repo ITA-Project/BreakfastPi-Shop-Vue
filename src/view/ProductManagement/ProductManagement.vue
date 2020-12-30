@@ -551,10 +551,10 @@ export default {
       this.fileList = [{
         uid: '-1',
         id: record.imageUrl + Math.random() * 10,
-        name: record.imageUrl,
+        name: record.imageUrl.substring(record.imageUrl.lastIndexOf('/') + 1, record.imageUrl.length),
         status: 'done',
-        url: 'http://106.53.102.70/resources/' + record.imageUrl,
-        thumbUrl: 'http://106.53.102.70/resources/' + record.imageUrl
+        url: record.imageUrl,
+        thumbUrl: record.imageUrl
       }]
     },
     beforeUpload (file) {
