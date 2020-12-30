@@ -39,7 +39,7 @@
           <img src="../../static/logo.png">
           <span class="title">Merchant management</span>
           <div class="User">
-            <span style="font-family:'Roboto Bold'">Welcome</span>
+            <router-link :to="{name: 'login'}">Logout</router-link>
             <a-icon
               style="margin-left:20px;margin-right:5px"
               type="user"

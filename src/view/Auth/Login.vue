@@ -58,6 +58,9 @@ export default {
       }
     }
   },
+  mounted () {
+    sessionStorage.clear()
+  },
   methods: {
     handleSubmit () {
       const self = this
