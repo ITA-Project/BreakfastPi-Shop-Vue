@@ -5,10 +5,12 @@ import BasicLayout from '../layout/BasicLayout'
 import ShopInfo from '../view/ShopInfo/ShopInfo'
 import OrderInfo from '../view/OrderInfo/OrderInfo'
 import Login from '../view/Auth/Login'
+import store from '../store'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
+  mode: 'history',
   routes: [{
     path: '/login',
     name: 'login',
@@ -19,20 +21,30 @@ export default new Router({
     component: BasicLayout,
     children: [
       {
-        path: 'order-info',
+        path: '/order-info',
         name: 'order-info',
         component: OrderInfo
       },
       {
-        path: 'product-management',
+        path: '/product-management',
         name: 'product-management',
         component: ProductManagement
       },
       {
-        path: 'my-info',
+        path: '/my-info',
         name: 'my-info',
         component: ShopInfo
       }
     ]
   }]
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.name === 'login' || store.state.token) {
+    next()
+  } else {
+    next({name: 'login', replace: true})
+  }
+})
+
+export default router
