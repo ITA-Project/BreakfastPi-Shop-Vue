@@ -44,7 +44,7 @@
               style="margin-left:20px;margin-right:5px"
               type="user"
             />
-            <span style="font-family:'Roboto Regular'">XXX</span>
+            <span style="font-family:'Roboto Regular'">{{this.$store.state.shop.name}}</span>
           </div>
         </a-layout-header>
         <a-layout-content

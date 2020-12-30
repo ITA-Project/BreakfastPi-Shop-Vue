@@ -116,7 +116,6 @@ export default {
   mixins: [columnsConfig],
   data () {
     return {
-      shopId: 1,
       outstandingOrders: [],
       allOrders: [],
       paginationCurrent: 1,
@@ -136,6 +135,11 @@ export default {
   },
   created () {
     this.getOutstandingOrders()
+  },
+  computed: {
+    shopId () {
+      return this.$store.state.shop.id
+    }
   },
   methods: {
     getOrders (value) {

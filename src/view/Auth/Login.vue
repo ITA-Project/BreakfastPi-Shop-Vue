@@ -8,7 +8,7 @@
             ref="form"
             :model="formModel"
             :rules="formRule"
-            @submit="handleSubmit"
+            @submit.prevent="handleSubmit"
           >
             <a-form-model-item prop="username">
               <a-input v-model="formModel.username" placeholder="Username">
@@ -59,7 +59,7 @@ export default {
     }
   },
   methods: {
-    handleSubmit (e) {
+    handleSubmit () {
       const self = this
       this.$refs.form.validate(valid => {
         if (valid) {
@@ -74,17 +74,17 @@ export default {
                   self.$store.commit('SET_SHOP_INFO', resp)
                   self.$router.push({name: 'home'})
                 } else {
-                  this.$message.warning('This account isn\'t shop owner ')
+                  self.$message.warning('This account isn\'t shop owner ')
                 }
               }).catch(err => {
-                this.$message.error('System error')
+                self.$message.error('System error')
                 console.log(err)
               })
             } else {
-              this.$message.warning('Username or password is incorrect')
+              self.$message.warning('Username or password is incorrect')
             }
           }).catch(err => {
-            this.$message.error('System error')
+            self.$message.error('System error')
             console.log(err)
           })
         }
