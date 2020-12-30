@@ -116,7 +116,7 @@ export default {
   mixins: [columnsConfig],
   data () {
     return {
-      shopId: 2,
+      shopId: 1,
       outstandingOrders: [],
       allOrders: [],
       paginationCurrent: 1,
@@ -139,7 +139,7 @@ export default {
   },
   methods: {
     getOrders (value) {
-      if (value === 1) {
+      if (value === '1') {
         this.getOutstandingOrders()
       } else {
         this.getAllOrders(0, 15)
