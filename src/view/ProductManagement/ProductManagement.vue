@@ -556,8 +556,8 @@ export default {
         id: record.imageUrl + Math.random() * 10,
         name: record.imageUrl.substring(record.imageUrl.lastIndexOf('/') + 1, record.imageUrl.length),
         status: 'done',
-        url: record.imageUrl,
-        thumbUrl: record.imageUrl
+        url: record.imageUrl.includes('https://ftp.bmp.ovh/imgs') ? record.imageUrl : 'http://106.53.102.70/resources/' + record.imageUrl,
+        thumbUrl: record.imageUrl.includes('https://ftp.bmp.ovh/imgs') ? record.imageUrl : 'http://106.53.102.70/resources/' + record.imageUrl
       }]
     },
     beforeUpload (file) {
