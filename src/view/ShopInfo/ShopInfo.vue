@@ -54,7 +54,6 @@ export default {
     return {
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
-      shopId: 1,
       form: {
         id: undefined,
         name: '',
@@ -92,6 +91,11 @@ export default {
   },
   mounted () {
     this.initShopInfo()
+  },
+  computed: {
+    shopId () {
+      return this.$store.state.shop.id
+    }
   },
   methods: {
     onSubmit () {

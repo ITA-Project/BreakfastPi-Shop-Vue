@@ -20,8 +20,15 @@ const updateShopInfo = async (param) => {
   return result.data
 }
 
+const getShopByUserId = async (userId) => {
+  const url = `/shops/users/${userId}`
+  const result = await get(url)
+  return result.data
+}
+
 export default {
   getShopDetailsByShopId,
   getShopById,
-  updateShopInfo
+  updateShopInfo,
+  getShopByUserId
 }

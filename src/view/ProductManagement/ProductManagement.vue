@@ -311,7 +311,6 @@ export default {
   mixins: [columnsConfig],
   data () {
     return {
-      shopId: 1,
       categories: [],
       categoryForm: this.$form.createForm(this),
       categoryDrawerVisible: false,
@@ -330,8 +329,12 @@ export default {
     }
   },
   mounted () {
-    const shopId = this.shopId
-    this.loadCategoriesAndProducts(shopId)
+    this.loadCategoriesAndProducts(this.shopId)
+  },
+  computed: {
+    shopId () {
+      return this.$store.state.shop.id
+    }
   },
   methods: {
     formatStatus (value) {
