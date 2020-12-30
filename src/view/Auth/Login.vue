@@ -36,6 +36,8 @@
 </template>
 
 <script>
+import userService from '../../service/user'
+
 export default {
   name: 'Login',
   data () {
@@ -60,7 +62,16 @@ export default {
       const self = this
       this.$refs.form.validate(valid => {
         if (valid) {
-          self.$router.push({name: 'home'})
+          userService.login(self.formModel).then(resp => {
+            if (resp.id) {
+              self.$router.push({name: 'home'})
+            } else {
+              this.$message.warning('Username or password is incorrect')
+            }
+          }).catch(err => {
+            this.$message.error('System error')
+            console.log(err)
+          })
         }
       })
     }
