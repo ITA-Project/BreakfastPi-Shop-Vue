@@ -8,6 +8,12 @@ import Login from '../view/Auth/Login'
 
 Vue.use(Router)
 
+const originalPush = Router.prototype.push
+
+Router.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+
 const router = new Router({
   mode: 'history',
   routes: [{
@@ -39,7 +45,7 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.name === 'login' || localStorage.getItem('token')) {
+  if (to.name === 'login' || sessionStorage.getItem('token')) {
     next()
   } else {
     next({name: 'login', replace: true})
