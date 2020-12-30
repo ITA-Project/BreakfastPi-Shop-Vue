@@ -86,7 +86,9 @@ export default {
           ]
         }
       ],
-      editable: false
+      editable: false,
+      status: 0,
+      statusMessage: ''
     }
   },
   mounted () {
@@ -94,7 +96,7 @@ export default {
   },
   computed: {
     shopId () {
-      return this.$store.state.shop.id
+      return localStorage.getItem('shopId')
     }
   },
   methods: {
@@ -106,10 +108,12 @@ export default {
             name: this.form.name,
             description: this.form.description,
             phone: this.form.phone,
-            address: this.form.region.join('') + this.form.detailAddress
+            address: this.form.region.join('') + this.form.detailAddress,
+            status: this.status,
+            statusMessage: this.statusMessage
           }
           shopService.updateShopInfo(param).then((response) => {
-            if (response === 1) {
+            if (!lodash.isEmpty(response)) {
               this.$message.success('Update Successfully!')
               this.initShopInfo()
               this.editable = false
@@ -132,6 +136,8 @@ export default {
           data.detailAddress = response.address.substring(index + 3)
         }
         this.form = data
+        this.status = data.status
+        this.statusMessage = data.statusMessage
       })
     }
   }

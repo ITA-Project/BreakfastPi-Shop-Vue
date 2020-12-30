@@ -69,9 +69,11 @@ export default {
             if (body.username) {
               self.$store.commit('SET_USER_INFO', body)
               self.$store.commit('SET_TOKEN', headers.authorization)
+              localStorage.setItem('token', headers.authorization)
               shopService.getShopByUserId(body.id).then(resp => {
                 if (resp.id) {
                   self.$store.commit('SET_SHOP_INFO', resp)
+                  localStorage.setItem('shopId', resp.id)
                   self.$router.push({name: 'home'})
                 } else {
                   self.$message.warning('This account isn\'t shop owner ')

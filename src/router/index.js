@@ -5,7 +5,6 @@ import BasicLayout from '../layout/BasicLayout'
 import ShopInfo from '../view/ShopInfo/ShopInfo'
 import OrderInfo from '../view/OrderInfo/OrderInfo'
 import Login from '../view/Auth/Login'
-import store from '../store'
 
 Vue.use(Router)
 
@@ -40,7 +39,7 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.name === 'login' || store.state.token) {
+  if (to.name === 'login' || localStorage.getItem('token')) {
     next()
   } else {
     next({name: 'login', replace: true})

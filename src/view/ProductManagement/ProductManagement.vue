@@ -333,7 +333,7 @@ export default {
   },
   computed: {
     shopId () {
-      return this.$store.state.shop.id
+      return localStorage.getItem('shopId')
     }
   },
   methods: {
