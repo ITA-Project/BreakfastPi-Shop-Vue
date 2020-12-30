@@ -67,13 +67,11 @@ export default {
             const body = resp.data
             const headers = resp.headers
             if (body.username) {
-              self.$store.commit('SET_USER_INFO', body)
-              self.$store.commit('SET_TOKEN', headers.authorization)
-              localStorage.setItem('token', headers.authorization)
               shopService.getShopByUserId(body.id).then(resp => {
                 if (resp.id) {
-                  self.$store.commit('SET_SHOP_INFO', resp)
-                  localStorage.setItem('shopId', resp.id)
+                  sessionStorage.setItem('token', headers.authorization)
+                  sessionStorage.setItem('shopId', resp.id)
+                  sessionStorage.setItem('shopName', resp.name)
                   self.$router.push({name: 'home'})
                 } else {
                   self.$message.warning('This account isn\'t shop owner ')

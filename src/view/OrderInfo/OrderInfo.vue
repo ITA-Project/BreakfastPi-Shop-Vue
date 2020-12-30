@@ -13,6 +13,7 @@
         class="components-table-demo-nested"
         size="small"
         :defaultExpandAllRows="true"
+        :expandRowByClick="true"
       >
 
         <template slot="status" slot-scope="text">
@@ -45,8 +46,8 @@
           :pagination="false"
           :row-key="record => record.id"
           size="small"
-          :scroll="{ x: 1500, y: 200 }"
         >
+          <!--          :scroll="{ x: 1500, y: 200 }"-->
           <template slot="inner-price" slot-scope="text">
         <span>
           {{'￥' + text}}
@@ -68,6 +69,7 @@
         class="components-table-demo-nested"
         size="small"
         :pagination="pagination"
+        :expandRowByClick="true"
       >
 
         <template slot="status" slot-scope="text">
@@ -138,7 +140,7 @@ export default {
   },
   computed: {
     shopId () {
-      return localStorage.getItem('shopId')
+      return sessionStorage.getItem('shopId')
     }
   },
   methods: {

@@ -44,7 +44,7 @@
               style="margin-left:20px;margin-right:5px"
               type="user"
             />
-            <span style="font-family:'Roboto Regular'">{{this.$store.state.shop.name}}</span>
+            <span style="font-family:'Roboto Regular'">{{shopName}}</span>
           </div>
         </a-layout-header>
         <a-layout-content
@@ -62,6 +62,11 @@ export default {
     return {
       collapsed: false,
       screenHeight: document.body.clientHeight
+    }
+  },
+  computed: {
+    shopName () {
+      return sessionStorage.getItem('shopName')
     }
   },
   mounted () {

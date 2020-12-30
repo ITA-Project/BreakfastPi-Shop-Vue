@@ -96,7 +96,7 @@ export default {
   },
   computed: {
     shopId () {
-      return localStorage.getItem('shopId')
+      return sessionStorage.getItem('shopId')
     }
   },
   methods: {
