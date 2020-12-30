@@ -37,6 +37,7 @@
 
 <script>
 import userService from '../../service/user'
+import shopService from '../../service/shop'
 
 export default {
   name: 'Login',
@@ -63,8 +64,22 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid) {
           userService.login(self.formModel).then(resp => {
-            if (resp.id) {
-              self.$router.push({name: 'home'})
+            const body = resp.data
+            const headers = resp.headers
+            if (body.username) {
+              self.$store.commit('SET_USER_INFO', body)
+              self.$store.commit('SET_TOKEN', headers.authorization)
+              shopService.getShopByUserId(body.id).then(resp => {
+                if (resp.id) {
+                  self.$store.commit('SET_SHOP_INFO', resp)
+                  self.$router.push({name: 'home'})
+                } else {
+                  this.$message.warning('This account isn\'t shop owner ')
+                }
+              }).catch(err => {
+                this.$message.error('System error')
+                console.log(err)
+              })
             } else {
               this.$message.warning('Username or password is incorrect')
             }
