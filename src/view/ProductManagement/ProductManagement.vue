@@ -18,6 +18,11 @@
           <a-badge status="default"/>Inactive
         </span>
       </template>
+      <template slot="dateTime" slot-scope="text">
+        <span>
+          {{text | dateTime}}
+        </span>
+      </template>
 
       <template slot="action" slot-scope="text, record, index">
         <a @click="onCategoryEdit(record)">Edit</a>
@@ -34,12 +39,16 @@
       >
 
         <template slot="inner-status" slot-scope="text">
-          <span v-if="text">
-            <a-badge status="success"/>Active
-          </span>
-          <span v-else>
-            <a-badge status="default"/>Inactive
-          </span>
+          <a-tag
+            :color="text === 0 ? 'pink' : text === 1 ? 'green': text ===-2? '#426b54': 'grey'"
+          >
+            {{ statusDesc[formatStatus(text)].toUpperCase() }}
+          </a-tag>
+        </template>
+        <template slot="dateTime" slot-scope="text">
+        <span>
+          {{text | dateTime}}
+        </span>
         </template>
 
         <template slot="inner-action" slot-scope="text, record, index" class="table-operation">
@@ -230,25 +239,24 @@
               </a-form-item>
             </a-col>
           </a-row>
-          <a-row>
+          <a-row v-if="isEditProduct && isEditStatus">
             <a-col>
               <a-form-item label="Status">
-                <a-select v-decorator="['status', { initialValue: 0}]" :options="statusList"/>
+                <a-select v-decorator="['status', { initialValue: 1}]" :disabled="!isEditStatus" >
+                  <a-select-option :value="-2">
+                    已下架
+                  </a-select-option>
+                  <a-select-option :value="1">
+                    上架
+                  </a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
           </a-row>
           <a-row>
             <a-col>
-              <a-form-item label="Image">
-                <a-input
-                  v-decorator="[
-                  'image',
-                  {
-                    rules: [{ message: 'Please enter product image' }],
-                  },
-                ]"
-                  placeholder="Please enter product image"
-                />
+              <a-form-item label="Result" v-if="isEditProduct && isShowResult">
+                <a-input v-decorator="['statusDescription']" disabled/>
               </a-form-item>
             </a-col>
           </a-row>
@@ -257,7 +265,7 @@
               <a-upload
                 :before-upload="beforeUpload"
                 list-type="picture"
-                :default-file-list="fileList"
+                :file-list="fileList"
                 @change="handleAttachmentChange"
               >
                 <a-button> <a-icon type="upload" /> upload </a-button>
@@ -313,20 +321,12 @@ export default {
       productDrawerVisible: false,
       isCreateProduct: false,
       isEditProduct: false,
-      statusList: [
-        {
-          value: 0,
-          label: '待审核'
-        },
-        {
-          value: 1,
-          label: '审核通过'
-        },
-        {
-          value: -1,
-          label: '下架'
-        }],
-      fileList: []
+      fileList: [],
+      productStatus: 0,
+      fileName: '',
+      isEditStatus: false,
+      isShowResult: false,
+      statusDesc: ['待审核', '上架', '审核不通过', '已下架']
     }
   },
   mounted () {
@@ -334,6 +334,12 @@ export default {
     this.loadCategoriesAndProducts(shopId)
   },
   methods: {
+    formatStatus (value) {
+      if (value < 0) {
+        return 1 - value
+      }
+      return value
+    },
     loadCategoriesAndProducts (shopId) {
       const self = this
       shopService.getShopDetailsByShopId(shopId).then(resp => {
@@ -412,6 +418,7 @@ export default {
     },
     onAddProductClick () {
       this.isCreateProduct = true
+      this.fileList = []
       this.showProductDrawer()
     },
     showProductDrawer () {
@@ -436,20 +443,41 @@ export default {
           console.log(err)
           return
         }
-        this.uploadFile().then(response => {
-          const newFile = this.newFile()
-          if (response && newFile.length > 0) {
-            values.imageUrl = newFile[0].name
-          }
-          productService.create(values).then(resp => {
-            this.loadCategoriesAndProducts(this.shopId)
-          }).catch(err => {
-            console.log(err)
+        const files = this.newFile()
+        const isExistFile = this.fileList.filter(o => o.id !== undefined).length > 1
+        const formData = new FormData()
+        if (isExistFile || files.length > 1) {
+          this.$message.error('只能上传一张图片！')
+        } else {
+          formData.append('file', files[0])
+          productService.checkImage(formData).then((res) => {
+            let isIllegal = false
+            if (res.type === '正常' && res.confidence === 0) {
+              this.productStatus = 1
+            }
+            if (res.type !== undefined && (res.type !== '正常' && res.confidence === 0)) {
+              this.productStatus = 0
+            }
+            if (res.type !== undefined && res.confidence > 0) {
+              isIllegal = true
+              this.$message.error('该图片含有违禁信息！')
+            }
+            if (!isIllegal) {
+              this.uploadFile().then(response => {
+                values.imageUrl = this.fileName
+                values.status = this.productStatus
+                productService.create(values).then(resp => {
+                  this.loadCategoriesAndProducts(this.shopId)
+                  this.onProductDrawerClose()
+                }).catch(err => {
+                  console.log(err)
+                })
+              }).catch(err => {
+                console.log(err)
+              })
+            }
           })
-        }).catch(err => {
-          console.log(err)
-        })
-        this.onProductDrawerClose()
+        }
       })
     },
     updateProduct: function () {
@@ -458,20 +486,41 @@ export default {
           console.log(err)
           return
         }
-        this.uploadFile().then(response => {
-          const newFile = this.newFile()
-          if (response && newFile.length > 0) {
-            values.imageUrl = newFile[0].name
-          }
-          productService.update(values).then(resp => {
-            this.loadCategoriesAndProducts(this.shopId)
-          }).catch(err => {
-            console.log(err)
+        const files = this.newFile()
+        const isExistFile = this.fileList.filter(o => o.id !== undefined).length > 0
+        const formData = new FormData()
+        if (isExistFile && files.length > 0) {
+          this.$message.error('只能上传一张图片！')
+        } else {
+          formData.append('file', files[0])
+          productService.checkImage(formData).then((res) => {
+            let isIllegal = false
+            if (res.type === '正常' && res.confidence === 0) {
+              this.productStatus = 1
+            }
+            if (res.type !== undefined && (res.type !== '正常' && res.confidence === 0)) {
+              this.productStatus = 0
+            }
+            if (res.type !== undefined && res.confidence > 0) {
+              isIllegal = true
+              this.$message.error('该图片含有违禁信息！')
+            }
+            if (!isIllegal) {
+              this.uploadFile().then(response => {
+                values.imageUrl = this.fileName
+                values.status = this.productStatus
+                productService.update(values).then(resp => {
+                  this.loadCategoriesAndProducts(this.shopId)
+                  this.onProductDrawerClose()
+                }).catch(err => {
+                  console.log(err)
+                })
+              }).catch(err => {
+                console.log(err)
+              })
+            }
           })
-        }).catch(err => {
-          console.log(err)
-        })
-        this.onProductDrawerClose()
+        }
       })
     },
     onProductDelete (productId) {
@@ -491,19 +540,21 @@ export default {
           id: record.id,
           name: record.name,
           description: record.description,
-          image: record.image,
           price: record.price,
           stock: record.stock,
-          status: record.status
+          status: record.status,
+          statusDescription: record.statusDescription
         })
       })
+      this.isEditStatus = record.status === 1 || record.status === -2
+      this.isShowResult = record.status === -1
       this.fileList = [{
         uid: '-1',
         id: record.imageUrl + Math.random() * 10,
         name: record.imageUrl,
         status: 'done',
-        url: 'https://xiekunlong.cn/resources/' + record.imageUrl,
-        thumbUrl: 'https://xiekunlong.cn/resources/' + record.imageUrl
+        url: 'http://106.53.102.70/resources/' + record.imageUrl,
+        thumbUrl: 'http://106.53.102.70/resources/' + record.imageUrl
       }]
     },
     beforeUpload (file) {
@@ -533,14 +584,11 @@ export default {
     },
     uploadFile () {
       const files = this.newFile()
-      const isExistFile = this.fileList.filter(o => o.id !== undefined).length > 0
       const formData = new FormData()
-      if (isExistFile || files.length > 1) {
-        this.$message.error('只能上传一张图片！')
-      } else {
-        formData.append('file', files[0])
-        return productService.uploadAttachment(formData)
-      }
+      const type = files[0].name.substr(files[0].name.lastIndexOf('.') + 1, files[0].name.length)
+      this.fileName = files[0].name.substr(0, files[0].name.lastIndexOf('.')) + new Date().getTime() + '.' + type
+      formData.append('file', files[0], this.fileName)
+      return productService.uploadAttachment(formData)
     },
     newFile () {
       return this.fileList

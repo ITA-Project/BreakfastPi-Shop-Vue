@@ -27,7 +27,12 @@ const deleteById = async (productId) => {
 }
 
 const uploadAttachment = async (params) => {
-  const result = await post('/ftp', params)
+  const result = await post('/image', params)
+  return result.data
+}
+
+const checkImage = async (params) => {
+  const result = await post('/image/check', params)
   return result.data
 }
 
@@ -36,5 +41,6 @@ export default {
   create,
   update,
   deleteById,
-  uploadAttachment
+  uploadAttachment,
+  checkImage
 }
