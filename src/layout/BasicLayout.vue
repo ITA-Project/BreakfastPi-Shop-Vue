@@ -32,6 +32,12 @@
               <span>My Information</span>
             </router-link>
           </a-menu-item>
+          <a-menu-item key="4">
+            <router-link :to="{name: 'data-statistics'}">
+              <a-icon type="area-chart"/>
+              <span>Data Statistics</span>
+            </router-link>
+          </a-menu-item>
         </a-menu>
       </a-layout-sider>
       <a-layout :style="{ height: screenHeight + 'px' }">

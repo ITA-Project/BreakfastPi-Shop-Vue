@@ -5,6 +5,7 @@ import BasicLayout from '../layout/BasicLayout'
 import ShopInfo from '../view/ShopInfo/ShopInfo'
 import OrderInfo from '../view/OrderInfo/OrderInfo'
 import Login from '../view/Auth/Login'
+import Chart from '../view/Chart/Chart'
 
 Vue.use(Router)
 
@@ -39,6 +40,11 @@ const router = new Router({
         path: '/my-info',
         name: 'my-info',
         component: ShopInfo
+      },
+      {
+        path: '/data-statistics',
+        name: 'data-statistics',
+        component: Chart
       }
     ]
   }]
