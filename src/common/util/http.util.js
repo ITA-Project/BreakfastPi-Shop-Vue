@@ -1,4 +1,5 @@
 import axios from 'axios'
+import router from '@/router'
 
 export const http = axios.create({
   timeout: 120000,
@@ -7,6 +8,22 @@ export const http = axios.create({
     Pragma: 'no-cache'
   },
   baseURL: 'api'
+})
+
+http.interceptors.request.use(config => {
+  const token = sessionStorage.getItem('token')
+  if (token) {
+    config.headers.Authorization = token
+  }
+  return config
+})
+
+http.interceptors.response.use(response => {
+  const error = response.data.data
+  if (error && error.errCode === 40001) {
+    router.push({name: 'login'})
+  }
+  return response
 })
 
 export const get = async (url, params) => http.get(url, {
