@@ -69,10 +69,10 @@ export default {
           userService.login(self.formModel).then(resp => {
             const body = resp.data
             const headers = resp.headers
+            sessionStorage.setItem('token', headers.authorization)
             if (body.username) {
               shopService.getShopByUserId(body.id).then(resp => {
                 if (resp.id) {
-                  sessionStorage.setItem('token', headers.authorization)
                   sessionStorage.setItem('shopId', resp.id)
                   sessionStorage.setItem('shopName', resp.name)
                   self.$router.push({name: 'home'})
