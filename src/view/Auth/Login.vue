@@ -2,8 +2,8 @@
   <div class="wrapper">
     <a-row>
       <a-col :offset="9" :span="6">
-        <h1>登录</h1>
         <div class="container">
+          <h1>商家登录</h1>
           <a-form-model
             ref="form"
             :model="formModel"
@@ -100,11 +100,19 @@ export default {
 <style scoped>
 
 .wrapper {
-  margin-top: 15em;
   text-align: center;
+  background-image: url("../../assets/background.png");
+  background-repeat: no-repeat;
+  background-size: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .container {
+  margin-top: 15em;
   text-align: center;
 }
 
