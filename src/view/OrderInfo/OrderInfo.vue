@@ -166,6 +166,7 @@ export default {
       const param = {page, pageSize, status: decodeURIComponent([0, 1, 2, 3, 4, 5, 6])}
       orderService.getShopOrdersByStatus(this.shopId, param).then((response) => {
         this.allOrders = [...response.list]
+        this.pagination.total = response.total
         this.loading = false
       })
     },

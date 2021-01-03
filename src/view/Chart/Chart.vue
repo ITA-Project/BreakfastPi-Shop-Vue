@@ -7,6 +7,7 @@
       </a-select>
       <a-button type="info" class="button" @click="getData">查询</a-button>
     </div>
+    <a-spin :spinning="spinning">
     <div class="chartContent">
       <div class="chartBox">
         <v-chart class="chart" :options="hotbar" :auto-resize="true"/>
@@ -15,6 +16,7 @@
         <v-chart class="chart" :options="line" :auto-resize="true"/>
       </div>
     </div>
+    </a-spin>
   </div>
 </template>
 
@@ -34,6 +36,7 @@ export default {
   },
   data: function () {
     return {
+      spinning: false,
       shop: '',
       moneyTotal: 0,
       orderTotal: 0,
@@ -79,8 +82,7 @@ export default {
         grid: {
           left: '3%',
           right: '4%',
-          bottom: '3%',
-          containLabel: true
+          bottom: '6%'
         },
         xAxis: [
           {
@@ -194,6 +196,7 @@ export default {
       this.timeType = value
     },
     getData () {
+      this.spinning = true
       statisticsService.getStatisticsData(this.shopId, {type: this.timeType})
         .then((res) => {
           if (lodash.isEmpty(res.status)) {
@@ -201,9 +204,6 @@ export default {
             let hotData = res.hot.data
             let saleOrderData = res.sale.orderData
             let saleMoneyData = res.sale.moneyData
-            let userData = res.user.data
-            let orderTimeData = res.orderTime.data
-            this.userTotal = this.sum(userData)
             this.orderTotal = this.sum(saleOrderData)
             this.moneyTotal = this.sum(saleMoneyData)
             let xaxis = []
@@ -224,9 +224,7 @@ export default {
             this.line.xAxis[0].data.push(...xaxis)
             this.line.series[0].data.push(...saleOrderData)
             this.line.series[1].data.push(...saleMoneyData)
-            for (let i = 0; i < this.pie.series[0].data.length; i++) {
-              this.pie.series[0].data[i]['value'] = orderTimeData[i]
-            }
+            this.spinning = false
           }
         })
     },
