@@ -1,7 +1,13 @@
 <template>
   <div>
-    <a-button type="primary" @click="onAddCategoryClick"> <a-icon type="plus" />Add Category</a-button>
-    <a-button type="primary" @click="onAddProductClick"> <a-icon type="plus" />Add Product</a-button>
+    <a-button type="primary" @click="onAddCategoryClick">
+      <a-icon type="plus"/>
+      Add Category
+    </a-button>
+    <a-button type="primary" @click="onAddProductClick">
+      <a-icon type="plus"/>
+      Add Product
+    </a-button>
     <a-table
       :columns="columns"
       :data-source="categories"
@@ -20,7 +26,7 @@
       </template>
       <template slot="dateTime" slot-scope="text">
         <span>
-          {{text | dateTime}}
+          {{ text | dateTime }}
         </span>
       </template>
 
@@ -47,7 +53,7 @@
         </template>
         <template slot="dateTime" slot-scope="text">
         <span>
-          {{text | dateTime}}
+          {{ text | dateTime }}
         </span>
         </template>
 
@@ -111,7 +117,7 @@
           <a-row>
             <a-col>
               <a-form-item label="Status">
-                <a-switch v-decorator="['status', { initialValue: true, valuePropName: 'checked' }]" />
+                <a-switch v-decorator="['status', { initialValue: true, valuePropName: 'checked' }]"/>
               </a-form-item>
             </a-col>
           </a-row>
@@ -163,7 +169,7 @@
                     :key="category.id"
                     :value="category.id"
                   >
-                    {{category.name}}
+                    {{ category.name }}
                   </a-select-option>
                 </a-select>
               </a-form-item>
@@ -220,7 +226,7 @@
                       initialValue: 5
                     }
                   ]"
-                  :min="0" :max="999" />
+                  :min="0" :max="999"/>
               </a-form-item>
             </a-col>
           </a-row>
@@ -235,14 +241,14 @@
                       initialValue: 100
                     }
                   ]"
-                  :min="0" :max="999999" />
+                  :min="0" :max="999999"/>
               </a-form-item>
             </a-col>
           </a-row>
           <a-row v-if="isEditProduct && isEditStatus">
             <a-col>
               <a-form-item label="Status">
-                <a-select v-decorator="['status', { initialValue: 1}]" :disabled="!isEditStatus" >
+                <a-select v-decorator="['status', { initialValue: 1}]" :disabled="!isEditStatus">
                   <a-select-option :value="-2">
                     已下架
                   </a-select-option>
@@ -268,7 +274,10 @@
                 :file-list="fileList"
                 @change="handleAttachmentChange"
               >
-                <a-button> <a-icon type="upload" /> upload </a-button>
+                <a-button>
+                  <a-icon type="upload"/>
+                  upload
+                </a-button>
               </a-upload>
             </a-col>
           </a-row>
@@ -452,77 +461,94 @@ export default {
         if (isExistFile || files.length > 1) {
           this.$message.error('只能上传一张图片！')
         } else {
-          formData.append('file', files[0])
-          productService.checkImage(formData).then((res) => {
-            let isIllegal = false
-            if (res.type === '正常' && res.confidence === 0) {
-              this.productStatus = 1
-            }
-            if (res.type !== undefined && (res.type !== '正常' && res.confidence === 0)) {
-              this.productStatus = 0
-            }
-            if (res.type !== undefined && res.confidence > 0) {
-              isIllegal = true
-              this.$message.error('该图片含有违禁信息！')
-            }
-            if (!isIllegal) {
-              this.uploadFile().then(response => {
-                values.imageUrl = this.fileName
-                values.status = this.productStatus
-                productService.create(values).then(resp => {
-                  this.loadCategoriesAndProducts(this.shopId)
-                  this.onProductDrawerClose()
+          if (files.length > 0) {
+            formData.append('file', files[0])
+            productService.checkImage(formData).then((res) => {
+              let isIllegal = false
+              if (res.type === '正常' && res.confidence === 0) {
+                this.productStatus = 1
+              }
+              if (res.type !== undefined && (res.type !== '正常' && res.confidence === 0)) {
+                this.productStatus = 0
+              }
+              if (res.type !== undefined && res.confidence > 0) {
+                isIllegal = true
+                this.$message.error('该图片含有违禁信息！')
+              }
+              if (!isIllegal) {
+                this.uploadFile().then(response => {
+                  values.imageUrl = this.fileName
+                  values.status = this.productStatus
+                  productService.create(values).then(resp => {
+                    this.loadCategoriesAndProducts(this.shopId)
+                    this.onProductDrawerClose()
+                  }).catch(err => {
+                    console.log(err)
+                  })
                 }).catch(err => {
                   console.log(err)
                 })
-              }).catch(err => {
-                console.log(err)
-              })
-            }
-          })
+              }
+            })
+          } else {
+            this.$message.warning('Please add image for product')
+          }
         }
       })
     },
     updateProduct: function () {
-      this.productForm.validateFields((err, values) => {
+      const self = this
+      self.productForm.validateFields((err, values) => {
         if (err) {
           console.log(err)
           return
         }
-        const files = this.newFile()
-        const isExistFile = this.fileList.filter(o => o.id !== undefined).length > 0
+        const files = self.newFile()
+        const isExistFile = self.fileList.filter(o => o.id !== undefined).length > 0
         const formData = new FormData()
         if (isExistFile && files.length > 0) {
-          this.$message.error('只能上传一张图片！')
+          self.$message.error('只能上传一张图片！')
         } else {
-          formData.append('file', files[0])
-          productService.checkImage(formData).then((res) => {
-            let isIllegal = false
-            if (res.type === '正常' && res.confidence === 0) {
-              this.productStatus = 1
-            }
-            if (res.type !== undefined && (res.type !== '正常' && res.confidence === 0)) {
-              this.productStatus = 0
-            }
-            if (res.type !== undefined && res.confidence > 0) {
-              isIllegal = true
-              this.$message.error('该图片含有违禁信息！')
-            }
-            if (!isIllegal) {
-              this.uploadFile().then(response => {
-                values.imageUrl = this.fileName
-                values.status = this.productStatus
-                productService.update(values).then(resp => {
-                  this.loadCategoriesAndProducts(this.shopId)
-                  this.onProductDrawerClose()
+          if (files.length > 0) {
+            formData.append('file', files[0])
+            productService.checkImage(formData).then((res) => {
+              let isIllegal = false
+              if (res.type === '正常' && res.confidence === 0) {
+                self.productStatus = 1
+              }
+              if (res.type !== undefined && (res.type !== '正常' && res.confidence === 0)) {
+                self.productStatus = 0
+              }
+              if (res.type !== undefined && res.confidence > 0) {
+                isIllegal = true
+                self.$message.error('该图片含有违禁信息！')
+              }
+              if (!isIllegal) {
+                self.uploadFile().then(response => {
+                  values.imageUrl = self.fileName
+                  values.status = self.productStatus
+                  productService.update(values).then(resp => {
+                    self.loadCategoriesAndProducts(self.shopId)
+                    self.onProductDrawerClose()
+                  }).catch(err => {
+                    console.log(err)
+                  })
                 }).catch(err => {
                   console.log(err)
                 })
-              }).catch(err => {
-                console.log(err)
-              })
-            }
-          })
+              }
+            })
+          } else if (self.fileList.length > 0) {
+            values.imageUrl = self.fileList[0].name
+            productService.update(values).then(resp => {
+              self.loadCategoriesAndProducts(self.shopId)
+              self.onProductDrawerClose()
+            }).catch(err => {
+              console.log(err)
+            })
+          } else {
+            this.$message.warning('Please add image for product')
+          }
         }
       })
     },
