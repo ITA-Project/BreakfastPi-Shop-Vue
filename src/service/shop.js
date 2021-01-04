@@ -3,7 +3,7 @@ import {
 } from '@/common/util/http.util'
 
 const getShopDetailsByShopId = async (shopId) => {
-  const url = `/shops/details/${shopId}`
+  const url = `/shops/all-details/${shopId}`
   const result = await get(url)
   return result.data
 }
