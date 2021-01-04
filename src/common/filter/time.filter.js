@@ -3,7 +3,7 @@ import moment from 'moment'
 export default {
   dateTime (text, defaultContent) {
     if (text) {
-      return moment(text).format('MM/DD/YYYY HH:mm')
+      return moment(text).add(8, 'h').format('MM/DD/YYYY HH:mm')
     }
     if (defaultContent) {
       return defaultContent
@@ -12,7 +12,7 @@ export default {
   },
   date (text, defaultContent) {
     if (text) {
-      return moment(text).format('MM/DD/YYYY')
+      return moment(text).add(8, 'h').format('MM/DD/YYYY')
     }
     if (defaultContent) {
       return defaultContent
