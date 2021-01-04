@@ -129,7 +129,7 @@ export default {
         showSizeChanger: true,
         onShowSizeChange: this.onShowSizeChange,
         onChange: this.pageChange,
-        pageSizeOptions: ['5', '10', '15', '20']
+        pageSizeOptions: ['5', '10', '15']
       },
       statusDesc: ['未支付', '已支付', '已接单', '已发货', '已送达', '已完成', '已取消'],
       loading: false
@@ -148,12 +148,12 @@ export default {
       if (value === '1') {
         this.getOutstandingOrders()
       } else {
-        this.getAllOrders(0, 15)
+        this.getAllOrders(1, 15)
       }
     },
     getOutstandingOrders () {
       const param = {
-        page: 0,
+        page: 1,
         pageSize: 100,
         status: decodeURIComponent([1, 2])
       }
@@ -167,6 +167,7 @@ export default {
       orderService.getShopOrdersByStatus(this.shopId, param).then((response) => {
         this.allOrders = [...response.list]
         this.pagination.total = response.total
+        this.pagination.current = page
         this.loading = false
       })
     },
@@ -176,7 +177,7 @@ export default {
       this.pagination.pageSize = pageSize
     },
     pageChange (page, pageSize) {
-      this.getAllOrders(page - 1, pageSize)
+      this.getAllOrders(page, pageSize)
     },
     updateOrder (orderId, status) {
       const param = {status: status}
