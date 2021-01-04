@@ -245,6 +245,21 @@
               </a-form-item>
             </a-col>
           </a-row>
+          <a-row>
+            <a-col>
+              <a-form-item label="Sales">
+                <a-input-number
+                  v-decorator="[
+                    'sales',
+                    {
+                      rules: [{required: true}],
+                      initialValue: 0
+                    }
+                  ]"
+                  :min="0" :max="999999"/>
+              </a-form-item>
+            </a-col>
+          </a-row>
           <a-row v-if="isEditProduct && isEditStatus">
             <a-col>
               <a-form-item label="Status">
