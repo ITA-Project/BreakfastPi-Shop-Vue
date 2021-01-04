@@ -584,6 +584,7 @@ export default {
           id: record.id,
           name: record.name,
           description: record.description,
+          sales: record.sales,
           price: record.price,
           stock: record.stock,
           status: record.status,
