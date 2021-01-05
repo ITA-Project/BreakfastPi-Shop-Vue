@@ -36,7 +36,7 @@
         <template slot="action" slot-scope="text, record, index">
           <a @click="updateOrder(record.id, 2)" :disabled = "record.status === 2">接单</a>
           <a :disabled = "record.status === 2" @click="updateOrder(record.id, 6)">取消</a>
-          <a v-if = "record.status === 2" @click="updateOrder(record.id, 3)">完成</a>
+          <a v-if = "record.status === 2" @click="updateOrder(record.id, 3)">派送</a>
         </template>
         <a-table
           slot="expandedRowRender"
